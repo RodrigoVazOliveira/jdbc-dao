@@ -22,11 +22,9 @@ public class ScreenShowAllProducts implements ScreenSystemOption {
     }
 
     private void showAllProducts(List<Product> products) {
-        System.out.printf("|%-4s ID %4s | %-4s NAME %4s | %-4s DESCRIPTION %4s |");
+        System.out.printf("|    ID    |    NAME     |    DESCRIPTION               |\n");
         for (Product product : products) {
-            System.out.printf("|%-4s " + product.getId() + " %4s |" +
-                    " %-4s " + product.getName() +  " %4s |" +
-                    " %-4s " + product.getDescription() + " %4s |");
+            System.out.printf("|%4s | %8s      | %16s    \n", product.getId(), product.getName(), product.getDescription());
         }
     }
 

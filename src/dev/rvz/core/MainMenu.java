@@ -3,10 +3,15 @@ package dev.rvz.core;
 import dev.rvz.core.proxys.IO;
 import dev.rvz.core.strategy.OptionsStrategy;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainMenu {
     private final OptionsStrategy optionsStrategy;
     private Boolean runningSystem = true;
     private Integer option;
+    private final List<Integer> OPTIONS_AVAILABLE = new ArrayList<>(Arrays.asList(1,2,3,4));
 
     public MainMenu(OptionsStrategy optionsStrategy) {
         this.optionsStrategy = optionsStrategy;
@@ -28,14 +33,16 @@ public class MainMenu {
             String word = IO.getScanner().nextLine();
             option = Integer.parseInt(word);
 
-            if (option != 5) {
+            if (OPTIONS_AVAILABLE.contains(option)) {
                 try {
                     optionsStrategy.selectScreen(option);
                 } catch (RuntimeException e) {
                     System.out.println(e.getMessage());
                 }
-            } else {
+            } else if (option == 5) {
                 runningSystem = false;
+            } else {
+                System.out.println("Opção não existe no sistema. Favor selecinar uma das opçoes disponiveis");
             }
         }
     }

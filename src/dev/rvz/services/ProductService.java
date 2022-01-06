@@ -70,6 +70,23 @@ public class ProductService {
         }
     }
 
+    public void remove(Integer id) {
+        Optional<Product> optionalProduct = findById(id);
+
+        if (optionalProduct.isEmpty()) {
+            throw new RuntimeException("Produto com id " + id + " não existe no sistema!");
+        }
+
+        String sql = "DELETE FROM product WHERE id = ?;";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Ocorreu um erro ao tentar remover o produto - erro: " + e.getMessage());
+        }
+    }
+
     private Optional<Product> findById(Integer id)  {
         String sql = "SELECT id, name, description FROM product WHERE id = ?";
         try {

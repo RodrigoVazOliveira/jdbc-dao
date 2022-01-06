@@ -1,17 +1,20 @@
 package dev.rvz;
 
+import dev.rvz.connections.CreateConnectionFactory;
 import dev.rvz.models.Product;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class ConnectionTest {
 
     public static void main(String[] args) {
+        CreateConnectionFactory connectionFactory = new CreateConnectionFactory();
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/loja_virtual",
-                    "loja_virtual",
-                    "loja_virtual");
+            Connection connection = connectionFactory.getConnection();
             selectAllProducts(connection);
             connection.close();
         } catch (SQLException e) {

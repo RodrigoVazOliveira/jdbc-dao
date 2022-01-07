@@ -17,8 +17,7 @@ public class ProductService {
 
 
     public void recordNewProduct(Product product) {
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO product VALUES (null, ?, ?)");
+        try (PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO product VALUES (null, ?, ?)")){
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
             preparedStatement.execute();
@@ -28,8 +27,7 @@ public class ProductService {
     }
 
     public List<Product> getAllProducts() {
-        try {
-            Statement statement = connection.createStatement();
+        try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery("SELECT id, name, description FROM product;");
             return buildListProducts(resultSet);
         } catch (SQLException e) {
@@ -59,8 +57,7 @@ public class ProductService {
         }
 
         String sql = "UPDATE product SET name=?, description=? WHERE id=?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
             preparedStatement.setInt(3, product.getId());
@@ -78,8 +75,7 @@ public class ProductService {
         }
 
         String sql = "DELETE FROM product WHERE id = ?;";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
             preparedStatement.execute();
         } catch (SQLException e) {
@@ -89,22 +85,21 @@ public class ProductService {
 
     private Optional<Product> findById(Integer id)  {
         String sql = "SELECT id, name, description FROM product WHERE id = ?";
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
-            return getProduct(id, resultSet);
+            return getProduct(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao buscar o produto com id " + id + " - erro: " + e.getMessage());
         }
     }
 
-    private Optional<Product> getProduct(Integer id, ResultSet resultSet) throws SQLException {
+    private Optional<Product> getProduct(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
-            Integer idOld = resultSet.getInt("id");
+            Integer id = resultSet.getInt("id");
             String name = resultSet.getString("name");
             String description = resultSet.getString("description");
-            Product product = new Product(idOld, name, description);
+            Product product = new Product(id, name, description);
 
             return Optional.of(product);
         } else {

@@ -14,6 +14,7 @@ public class StoreVirtualApplication {
         comboPooledDataSource.setJdbcUrl("jdbc:mariadb://localhost:3306/loja_virtual");
         comboPooledDataSource.setUser("loja_virtual");
         comboPooledDataSource.setPassword("loja_virtual");
+        comboPooledDataSource.setMaxPoolSize(15);
 
         CreateConnectionFactory connectionFactory = new CreateConnectionFactory(comboPooledDataSource);
         ScreenConfig screenConfig = new ScreenConfig(connectionFactory.getConnection());

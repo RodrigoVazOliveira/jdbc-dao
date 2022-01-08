@@ -8,17 +8,13 @@ import java.sql.SQLException;
 
 public class CreateConnectionFactory {
 
-    private final ComboPooledDataSource comboPooledDataSource;
-    private Connection connection;
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public CreateConnectionFactory(ComboPooledDataSource comboPooledDataSource) {
-        this.comboPooledDataSource = comboPooledDataSource;
-        this.dataSource = this.comboPooledDataSource;
+        this.dataSource = comboPooledDataSource;
     }
 
     public Connection getConnection() throws SQLException {
-        this.connection = this.dataSource.getConnection();
-        return connection;
+        return this.dataSource.getConnection();
     }
 }

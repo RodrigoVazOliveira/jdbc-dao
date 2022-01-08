@@ -18,6 +18,7 @@ public class ScreenRecordProduct implements ScreenSystemOption {
         System.out.println("Por favor, digite o nome e a descrição do produto:");
         String name = IO.getScanner().nextLine();
         String description = IO.getScanner().nextLine();
+
         Product product = new Product(null, name, description);
         productService.recordNewProduct(product);
         System.out.println("Produto gravado com sucesso! \u2713");

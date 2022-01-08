@@ -6,11 +6,11 @@ import dev.rvz.services.ProductService;
 
 import java.util.List;
 
-public class ScreenShowAllProducts implements ScreenSystemOption {
+public class ScreenShowAllProduct implements ScreenSystemOption {
 
     private final ProductService productService;
 
-    public ScreenShowAllProducts(ProductService productService) {
+    public ScreenShowAllProduct(ProductService productService) {
         this.productService = productService;
     }
 
@@ -22,7 +22,7 @@ public class ScreenShowAllProducts implements ScreenSystemOption {
     }
 
     private void showAllProducts(List<Product> products) {
-        System.out.printf("|    ID    |    NAME     |    DESCRIPTION               |\n");
+        System.out.print("|    ID    |    NAME     |    DESCRIPTION               |\n");
         for (Product product : products) {
             System.out.printf("|%4s | %8s      | %16s    \n", product.getId(), product.getName(), product.getDescription());
         }
@@ -30,7 +30,7 @@ public class ScreenShowAllProducts implements ScreenSystemOption {
 
     private void isListEmpty(List<Product> products) {
         if (products.isEmpty()) {
-            System.out.printf("Não existem produtos a serem listados!");
+            System.out.print("Não existem produtos a serem listados!");
         }
 
         showAllProducts(products);

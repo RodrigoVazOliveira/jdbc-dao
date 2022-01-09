@@ -46,7 +46,7 @@ public class ProductService {
             throw new RuntimeException("Produto com id " + product.getId() + " não existe no sistema!");
         }
 
-        String sql = "UPDATE product SET name=?, description=? WHERE id=?";
+        String sql = "UPDATE product SET name = ?, description=? WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());

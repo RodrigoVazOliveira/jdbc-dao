@@ -28,5 +28,7 @@ public class StoreVirtualGUIApplication {
 
         ProductWindow productWindow = new ProductWindow("Produtos", productController, categoryController);
         productWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        createConnectionFactory.getConnection().close();
     }
 }

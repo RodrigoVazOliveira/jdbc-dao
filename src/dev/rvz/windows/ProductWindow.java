@@ -109,10 +109,10 @@ public class ProductWindow extends JFrame {
     }
 
     private void updateProduct() {
-        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), table1.getSelectedColumn());
+        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), 0);
         if (lineSelect instanceof Integer) {
-            Integer id = (Integer) lineSelect;
-            String name = (String) defaultTableModel.getValueAt(table1.getEditingRow(), 1);
+            Integer id = (Integer) defaultTableModel.getValueAt(table1.getSelectedRow(), 0);
+            String name = (String) defaultTableModel.getValueAt(table1.getSelectedRow(), 1);
             String description = (String) defaultTableModel.getValueAt(table1.getSelectedRow(), 2);
             Product product = new Product.Builder()
                     .setId(id)

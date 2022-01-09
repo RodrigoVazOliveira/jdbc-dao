@@ -15,14 +15,11 @@ public class CategoryService {
         this.connection = connection;
     }
 
-    public Category save(Category category) {
+    public void save(Category category) {
         String sql = "INSERT INTO category VALUES (NULL, ?);";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, category.getName());
             preparedStatement.execute();
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            resultSet.next();
-            return new Category(resultSet.getInt("id"), category.getName(), new ArrayList<>());
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao tentar inserir uma nova categoria - erro: " + e.getMessage());
         }
@@ -51,6 +48,7 @@ public class CategoryService {
         String sql = "UPDATE category SET name=? WHERE id = ?;";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql , Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, category.getName());
+            preparedStatement.setInt(2, category.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao tentar atualizar a categoria - erro: " + e.getMessage());
@@ -112,13 +110,15 @@ public class CategoryService {
 
     private void createCategoryAndProduct(List<Category> categories, Integer idCategory, String nameCategory, Integer idProduct, String nameProduct, String descriptionProduct) {
         Category category;
-        if (!categories.contains(idCategory)) {
+        Category categoryContains = new Category.builder().setId(idCategory).build();
+        if (!categories.contains(categoryContains)) {
             category = new Category(idCategory, nameCategory, new ArrayList<>());
+            category.getProducts().add(new Product(idProduct, nameProduct, descriptionProduct, category));
+            categories.add(category);
         } else {
             category = getCategoryByProduct(categories, idCategory);
+            category.getProducts().add(new Product(idProduct, nameProduct, descriptionProduct, category));
         }
-        category.getProducts().add(new Product(idProduct, nameProduct, descriptionProduct, category));
-        categories.add(category);
     }
 
     private Category getCategoryByProduct(List<Category> categories, Integer idCategory) {

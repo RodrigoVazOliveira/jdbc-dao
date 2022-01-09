@@ -87,6 +87,7 @@ public class ProductWindow extends JFrame {
             removeProduct();
             clearInputs();
             clearTable();
+            fillTable();
         });
 
         return removeButton;

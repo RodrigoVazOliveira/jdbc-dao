@@ -7,7 +7,7 @@ import dev.rvz.core.MainMenu;
 
 import java.sql.SQLException;
 
-public class StoreVirtualApplication {
+public class StoreVirtualCommandLineApplication {
 
     public static void main(String[] args) throws SQLException {
         ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();

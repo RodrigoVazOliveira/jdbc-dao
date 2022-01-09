@@ -53,6 +53,22 @@ public class CategoryService {
         }
     }
 
+    public void remove(Integer id) {
+        Optional<Category> optionalCategory = findById(id);
+
+        if (optionalCategory.isEmpty()) {
+            throw new RuntimeException("Produto com id " + id + " não existe no sistema!");
+        }
+
+        String sql = "DELETE FROM category WHERE id = ?";
+        try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException("Ocorreu um erro ao tentar remover a categoria - erro: " + e.getMessage());
+        }
+    }
+
     private Optional<Category> findById(Integer id) {
         String sql = "SELECT id, name FROM category WHERE id = ?;";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {

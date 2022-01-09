@@ -12,15 +12,10 @@ import java.util.List;
 
 public class ProductWindow extends JFrame {
     private final ProductController productController;
-    private final CategoryController categoryController;
 
-    private JLabel nameProductLabel;
     private JTextField nameProductTextField;
-    private JLabel descriptionProductLabel;
     private JTextField descriptionProducttextField;
-    private JLabel categoryProductLabel;
     private JComboBox<Category> categoryProductComboBox;
-    private JButton saveButton, updateButton, clearButton, removeButton;
     private JTable table1;
     private DefaultTableModel defaultTableModel;
 
@@ -28,13 +23,12 @@ public class ProductWindow extends JFrame {
     public ProductWindow(String title, ProductController productController, CategoryController categoryController) throws HeadlessException {
         super(title);
         this.productController = productController;
-        this.categoryController = categoryController;
 
         Container container = getContentPane();
         setLayout(null);
 
         createLabels(container);
-        createTextFileds(container, this.categoryController.getAll());
+        createTextFileds(container, categoryController.getAll());
         createButton(container);
         createTable(container);
 
@@ -64,35 +58,16 @@ public class ProductWindow extends JFrame {
     }
 
     private void createButton(Container container) {
-        Integer width = 150;
-        saveButton = new JButton("Salvar produto");
-        saveButton.setBounds(10, 145, width, 20);
+        container.add(createSaveButton());
+        container.add(createClearButton());
+        container.add(createRemoveButton());
+        container.add(createUpdateButton());
 
-        saveButton.addActionListener(actionEvent -> {
-            salvarProduct();
-            clearTable();
-            fillTable();
-            clearInputs();
-        });
+    }
 
-        clearButton = new JButton("Limpar");
-        clearButton.setBounds(200, 145, width, 20);
-
-        clearButton.addActionListener(actionEvent -> {
-            clearInputs();
-        });
-
-        removeButton = new JButton("Excluir");
-        removeButton.setBounds(10, 500, width, 20);
-
-        removeButton.addActionListener(actionEvent -> {
-            removeProduct();
-            clearInputs();
-            clearTable();
-        });
-
-        updateButton = new JButton("Atualizar");
-        updateButton.setBounds(200, 500, width, 20);
+    private JButton createUpdateButton() {
+        JButton updateButton = new JButton("Atualizar");
+        updateButton.setBounds(200, 500, 150, 20);
 
         updateButton.addActionListener(actionEvent -> {
             updateProduct();
@@ -101,11 +76,42 @@ public class ProductWindow extends JFrame {
             fillTable();
         });
 
-        container.add(saveButton);
-        container.add(clearButton);
-        container.add(removeButton);
-        container.add(updateButton);
+        return updateButton;
+    }
 
+    private JButton createRemoveButton() {
+        JButton removeButton = new JButton("Excluir");
+        removeButton.setBounds(10, 500, 150, 20);
+
+        removeButton.addActionListener(actionEvent -> {
+            removeProduct();
+            clearInputs();
+            clearTable();
+        });
+
+        return removeButton;
+    }
+
+    private JButton createClearButton() {
+        JButton clearButton = new JButton("Limpar");
+        clearButton.setBounds(200, 145, 150, 20);
+
+        clearButton.addActionListener(actionEvent -> clearInputs());
+
+        return clearButton;
+    }
+
+    private JButton createSaveButton() {
+        JButton saveButton = new JButton("Salvar produto");
+        saveButton.setBounds(10, 145, 150, 20);
+
+        saveButton.addActionListener(actionEvent -> {
+            saveProduct();
+            clearInputs();
+            clearTable();
+            fillTable();
+        });
+        return saveButton;
     }
 
     private void updateProduct() {
@@ -128,7 +134,7 @@ public class ProductWindow extends JFrame {
     }
 
     private void removeProduct() {
-        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), table1.getSelectedColumn());
+        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), 0);
         if (lineSelect instanceof Integer) {
             Integer id = (Integer) lineSelect;
             try {
@@ -151,8 +157,8 @@ public class ProductWindow extends JFrame {
         defaultTableModel.getDataVector().clear();
     }
 
-    private void salvarProduct() {
-        if (!nameProductTextField.equals("") && !descriptionProducttextField.equals("")) {
+    private void saveProduct() {
+        if (!nameProductTextField.getText().equals("") && !descriptionProducttextField.getText().equals("")) {
             Category category = (Category) categoryProductComboBox.getSelectedItem();
             Product product = new Product.Builder()
                     .setName(nameProductTextField.getText())
@@ -182,15 +188,15 @@ public class ProductWindow extends JFrame {
     }
 
     private void createLabels(Container container) {
-        nameProductLabel = new JLabel("nome do produto");
+        JLabel nameProductLabel = new JLabel("nome do produto");
         nameProductLabel.setBounds(10, 10, 240, 15);
         nameProductLabel.setForeground(Color.BLACK);
 
-        descriptionProductLabel = new JLabel("descrição do produto");
+        JLabel descriptionProductLabel = new JLabel("descrição do produto");
         descriptionProductLabel.setBounds(10, 50, 240, 15);
         descriptionProductLabel.setForeground(Color.BLACK);
 
-        categoryProductLabel = new JLabel("categoria do produto");
+        JLabel categoryProductLabel = new JLabel("categoria do produto");
         categoryProductLabel.setBounds(10, 90, 240, 15);
         categoryProductLabel.setForeground(Color.BLACK);
 

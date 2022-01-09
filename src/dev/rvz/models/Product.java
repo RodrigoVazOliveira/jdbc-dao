@@ -4,9 +4,9 @@ public class Product {
     private final Integer id;
     private final String name;
     private final String description;
-    private final Integer category;
+    private final Category category;
 
-    public Product(Integer id, String name, String description, Integer category) {
+    public Product(Integer id, String name, String description, Category category) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,7 +25,7 @@ public class Product {
         return description;
     }
 
-    public Integer getCategory() {
+    public Category getCategory() {
         return category;
     }
 

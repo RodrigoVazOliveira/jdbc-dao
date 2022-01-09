@@ -1,6 +1,7 @@
 package dev.rvz.services;
 
 import dev.rvz.models.Category;
+import dev.rvz.models.Product;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,14 +22,17 @@ public class CategoryService {
             preparedStatement.execute();
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             resultSet.next();
-            return new Category(resultSet.getInt("id"), category.getName());
+            return new Category(resultSet.getInt("id"), category.getName(), new ArrayList<>());
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao tentar inserir uma nova categoria - erro: " + e.getMessage());
         }
     }
 
     public List<Category> getAll() {
-        String sql = "SELECT id, name FROM category;";
+        String sql = "SELECT " +
+                "c.id, c.name, p.id, p.name, p.description " +
+                "FROM category c, product p " +
+                "WHERE c.id = p.id_category;";
         try (Statement statement = this.connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
             return getCategories(resultSet);
@@ -69,7 +73,7 @@ public class CategoryService {
         }
     }
 
-    private Optional<Category> findById(Integer id) {
+    public Optional<Category> findById(Integer id) {
         String sql = "SELECT id, name FROM category WHERE id = ?;";
         try (PreparedStatement preparedStatement = this.connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
@@ -84,7 +88,7 @@ public class CategoryService {
         if (resultSet.next()) {
             Integer id = resultSet.getInt("id");
             String name = resultSet.getString("name");
-            Category category = new Category(id, name);
+            Category category = new Category(id, name, new ArrayList<>());
             return Optional.of(category);
         }
 
@@ -94,11 +98,36 @@ public class CategoryService {
     private List<Category> getCategories(ResultSet resultSet) throws SQLException {
         List<Category> categories = new ArrayList<>();
         while (resultSet.next()) {
-            Integer id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            categories.add(new Category(id, name));
+            Integer idCategory = resultSet.getInt(1);
+            String nameCategory = resultSet.getString(2);
+            Integer idProduct = resultSet.getInt(3);
+            String nameProduct = resultSet.getString(4);
+            String descriptionProduct = resultSet.getString(5);
+
+            createCategoryAndProduct(categories, idCategory, nameCategory, idProduct, nameProduct, descriptionProduct);
         }
 
         return categories;
+    }
+
+    private void createCategoryAndProduct(List<Category> categories, Integer idCategory, String nameCategory, Integer idProduct, String nameProduct, String descriptionProduct) {
+        Category category;
+        if (!categories.contains(idCategory)) {
+            category = new Category(idCategory, nameCategory, new ArrayList<>());
+        } else {
+            category = getCategoryByProduct(categories, idCategory);
+        }
+        category.getProducts().add(new Product(idProduct, nameProduct, descriptionProduct, category));
+        categories.add(category);
+    }
+
+    private Category getCategoryByProduct(List<Category> categories, Integer idCategory) {
+        for (Category category : categories) {
+            if (category.getId().equals(idCategory)) {
+                return category;
+            }
+        }
+
+        throw new RuntimeException("Ocorreu um erro ao listar todas as categorias");
     }
 }

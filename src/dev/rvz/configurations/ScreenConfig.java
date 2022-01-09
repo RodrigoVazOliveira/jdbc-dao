@@ -6,6 +6,7 @@ import dev.rvz.core.screens.system.ScreenShowAllProduct;
 import dev.rvz.core.screens.system.ScreenUpdateProduct;
 import dev.rvz.core.strategy.OptionsStrategy;
 import dev.rvz.core.strategy.ScreenSystemOption;
+import dev.rvz.services.CategoryService;
 import dev.rvz.services.ProductService;
 
 import java.sql.Connection;
@@ -20,7 +21,8 @@ public class ScreenConfig {
     }
 
     public OptionsStrategy build()  {
-        ProductService productService = new ProductService(connection);
+        CategoryService categoryService = new CategoryService(connection);
+        ProductService productService = new ProductService(connection, categoryService);
 
         HashMap<Integer, ScreenSystemOption> screens = new HashMap<>();
         screens.put(1, new ScreenRecordProduct(productService));

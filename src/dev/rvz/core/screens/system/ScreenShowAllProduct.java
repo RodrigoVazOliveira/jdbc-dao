@@ -17,7 +17,7 @@ public class ScreenShowAllProduct implements ScreenSystemOption {
     @Override
     public void running() {
         System.out.println("Listando os produtos.......");
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAll();
         isListEmpty(products);
     }
 

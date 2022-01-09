@@ -1,5 +1,6 @@
 package dev.rvz.services;
 
+import dev.rvz.models.Category;
 import dev.rvz.models.Product;
 
 import java.sql.*;
@@ -10,27 +11,29 @@ import java.util.Optional;
 public class ProductService {
 
     private final Connection connection;
+    private final CategoryService categoryService;
 
-    public ProductService(Connection connection) {
+    public ProductService(Connection connection, CategoryService categoryService) {
         this.connection = connection;
+        this.categoryService = categoryService;
     }
 
-
     public void recordNewProduct(Product product) {
-        String sql = "INSERT INTO product VALUES (null, ?, ?)";
+        String sql = "INSERT INTO product VALUES (null, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, product.getName());
             preparedStatement.setString(2, product.getDescription());
+            preparedStatement.setInt(3, product.getCategory().getId());
             preparedStatement.execute();
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao inserir o produto - erro: " + e.getMessage());
         }
     }
 
-    public List<Product> getAllProducts() {
+    public List<Product> getAll() {
         try (Statement statement = connection.createStatement()) {
-            ResultSet resultSet = statement.executeQuery("SELECT id, name, description FROM product;");
-            return buildListProducts(resultSet);
+            ResultSet resultSet = statement.executeQuery("SELECT id, name, description, id_category FROM product;");
+            return getProducts(resultSet);
         } catch (SQLException e) {
             throw new RuntimeException("Ocorreu um erro ao buscar os produto - erro: " + e.getMessage());
         }
@@ -70,22 +73,32 @@ public class ProductService {
         }
     }
 
-    private List<Product> buildListProducts(ResultSet resultSet) throws SQLException {
+    private List<Product> getProducts(ResultSet resultSet) throws SQLException {
         List<Product> products = new ArrayList<>();
         while (resultSet.next()) {
-            Integer id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            String description = resultSet.getString("description");
-            Product product = new Product(id, name, description);
-
-            products.add(product);
+            products.add(createProduct(resultSet));
         }
 
         return products;
     }
 
+    private Product createProduct(ResultSet resultSet) throws SQLException {
+        Integer id = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        String description = resultSet.getString("description");
+        Integer idCategory = resultSet.getInt("id_category");
+
+        Optional<Category> optionalCategory = categoryService.findById(idCategory);
+
+        if (optionalCategory.isEmpty()) {
+            throw new RuntimeException("categoria do produto não localizado!");
+        }
+
+        return new Product(id, name, description, optionalCategory.get());
+    }
+
     private Optional<Product> findById(Integer id) {
-        String sql = "SELECT id, name, description FROM product WHERE id = ?";
+        String sql = "SELECT id, name, description, id_category FROM product WHERE id = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -97,12 +110,7 @@ public class ProductService {
 
     private Optional<Product> getProduct(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
-            Integer id = resultSet.getInt("id");
-            String name = resultSet.getString("name");
-            String description = resultSet.getString("description");
-            Product product = new Product(id, name, description);
-
-            return Optional.of(product);
+            return Optional.of(createProduct(resultSet));
         } else {
             return Optional.empty();
         }

@@ -50,7 +50,7 @@ public class ProductService {
             preparedStatement.setInt(3, product.getId());
             preparedStatement.execute();
         } catch (SQLException e) {
-            throw new RuntimeException("Ocorreu um erro ao tentar atualizar o produto - erro: " + e.getMessage());
+                throw new RuntimeException("Ocorreu um erro ao tentar atualizar o produto - erro: " + e.getMessage());
         }
     }
 

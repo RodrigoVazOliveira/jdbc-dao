@@ -1,4 +1,4 @@
-package dev.rvz.core.screens.system;
+package dev.rvz.core.screens.system.products;
 
 import dev.rvz.core.strategy.ScreenSystemOption;
 import dev.rvz.models.Product;

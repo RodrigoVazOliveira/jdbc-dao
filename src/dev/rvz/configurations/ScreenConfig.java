@@ -1,9 +1,9 @@
 package dev.rvz.configurations;
 
-import dev.rvz.core.screens.system.ScreenRecordProduct;
-import dev.rvz.core.screens.system.ScreenRemoveProduct;
-import dev.rvz.core.screens.system.ScreenShowAllProduct;
-import dev.rvz.core.screens.system.ScreenUpdateProduct;
+import dev.rvz.core.screens.system.products.ScreenRecordProduct;
+import dev.rvz.core.screens.system.products.ScreenRemoveProduct;
+import dev.rvz.core.screens.system.products.ScreenShowAllProduct;
+import dev.rvz.core.screens.system.products.ScreenUpdateProduct;
 import dev.rvz.core.strategy.OptionsStrategy;
 import dev.rvz.core.strategy.ScreenSystemOption;
 import dev.rvz.services.CategoryService;

@@ -15,4 +15,16 @@ public class ProductController {
     public List<Product> getAll() {
         return this.productService.getAll();
     }
+
+    public void save(Product product) {
+        this.productService.recordNewProduct(product);
+    }
+
+    public void remove(Integer id) {
+        this.productService.remove(id);
+    }
+
+    public void update(Product product) {
+        this.productService.updateProduct(product);
+    }
 }

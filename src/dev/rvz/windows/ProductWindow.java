@@ -68,20 +68,98 @@ public class ProductWindow extends JFrame {
         saveButton = new JButton("Salvar produto");
         saveButton.setBounds(10, 145, width, 20);
 
+        saveButton.addActionListener(actionEvent -> {
+            salvarProduct();
+            clearTable();
+            fillTable();
+            clearInputs();
+        });
+
         clearButton = new JButton("Limpar");
         clearButton.setBounds(200, 145, width, 20);
+
+        clearButton.addActionListener(actionEvent -> {
+            clearInputs();
+        });
 
         removeButton = new JButton("Excluir");
         removeButton.setBounds(10, 500, width, 20);
 
+        removeButton.addActionListener(actionEvent -> {
+            removeProduct();
+            clearInputs();
+            clearTable();
+        });
+
         updateButton = new JButton("Atualizar");
         updateButton.setBounds(200, 500, width, 20);
+
+        updateButton.addActionListener(actionEvent -> {
+            updateProduct();
+            clearInputs();
+            clearTable();
+            fillTable();
+        });
 
         container.add(saveButton);
         container.add(clearButton);
         container.add(removeButton);
         container.add(updateButton);
 
+    }
+
+    private void updateProduct() {
+        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), table1.getSelectedColumn());
+        if (lineSelect instanceof Integer) {
+            Integer id = (Integer) lineSelect;
+            String name = (String) defaultTableModel.getValueAt(table1.getEditingRow(), 1);
+            String description = (String) defaultTableModel.getValueAt(table1.getSelectedRow(), 2);
+            Product product = new Product.Builder()
+                    .setId(id)
+                    .setName(name)
+                    .setDescription(description)
+                    .build();
+            try {
+                this.productController.update(product);
+            } catch (RuntimeException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+    }
+
+    private void removeProduct() {
+        Object lineSelect = defaultTableModel.getValueAt(table1.getSelectedRow(), table1.getSelectedColumn());
+        if (lineSelect instanceof Integer) {
+            Integer id = (Integer) lineSelect;
+            try {
+                this.productController.remove(id);
+                defaultTableModel.removeRow(table1.getSelectedRow());
+                JOptionPane.showMessageDialog(this, "Produto removido com sucesso!");
+            } catch (RuntimeException e) {
+                JOptionPane.showMessageDialog(this, e.getMessage());
+            }
+        }
+    }
+
+    private void clearInputs() {
+        nameProductTextField.setText("");
+        descriptionProducttextField.setText("");
+        categoryProductComboBox.setSelectedIndex(0);
+    }
+
+    private void clearTable() {
+        defaultTableModel.getDataVector().clear();
+    }
+
+    private void salvarProduct() {
+        if (!nameProductTextField.equals("") && !descriptionProducttextField.equals("")) {
+            Category category = (Category) categoryProductComboBox.getSelectedItem();
+            Product product = new Product.Builder()
+                    .setName(nameProductTextField.getText())
+                    .setDescription(descriptionProducttextField.getText())
+                    .setCategory(category).build();
+            this.productController.save(product);
+        }
     }
 
     private void createTextFileds(Container container, List<Category> categories) {
@@ -113,7 +191,7 @@ public class ProductWindow extends JFrame {
         descriptionProductLabel.setForeground(Color.BLACK);
 
         categoryProductLabel = new JLabel("categoria do produto");
-        categoryProductLabel.setBounds(10, 50, 240, 15);
+        categoryProductLabel.setBounds(10, 90, 240, 15);
         categoryProductLabel.setForeground(Color.BLACK);
 
         container.add(nameProductLabel);

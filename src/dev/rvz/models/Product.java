@@ -38,4 +38,35 @@ public class Product {
                 ", category=" + category.getName() +
                 '}';
     }
+
+    public static class Builder {
+        private Integer id;
+        private String name;
+        private String description;
+        private Category category;
+
+        public Builder setId(Integer id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setCategory(Category category) {
+            this.category = category;
+            return this;
+        }
+
+        public Product build() {
+            return new Product(id, name, description, category);
+        }
+    }
 }

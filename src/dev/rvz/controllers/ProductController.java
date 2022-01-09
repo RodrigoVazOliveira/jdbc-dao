@@ -1,4 +1,4 @@
-package dev.rvz.windows;
+package dev.rvz.controllers;
 
 import dev.rvz.services.ProductService;
 
